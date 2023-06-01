@@ -1,3 +1,10 @@
+[![Dagster](https://img.shields.io/badge/Python-Dagster-yellow?style=for-the-badge&logo=Python)](https://dagster.io)
+[![Poetry](https://img.shields.io/badge/Python-Poetry-yellow?style=for-the-badge&logo=Python)](https://python-poetry.org/)
+[![Nix](https://img.shields.io/badge/Nix-Environments-yellow?style=for-the-badge&logo=NixOS)](https://nixos.org/)
+[![Standard](https://img.shields.io/badge/Nix-Standard-yellow?style=for-the-badge&logo=NixOS)](https://std.divnix.com/)
+
+
+
 # Eigen Challenge 2023
 
 ## Overview
