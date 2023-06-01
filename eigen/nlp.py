@@ -2,7 +2,6 @@ import nltk
 import scipy
 import spacy
 
-SPACY_EN = spacy.load("en_core_web_sm")
 import re
 from collections import Counter
 
@@ -16,7 +15,6 @@ from nltk.corpus import stopwords
 from nltk.tokenize import sent_tokenize, word_tokenize
 
 PUNKT = string.punctuation
-EN_STOPWORDS = set(stopwords.words("english"))
 # Define the regex pattern to match punctuation
 RGX_PUNKT = re.escape(string.punctuation)  # + '$'
 RGX_ELLIPSIS = re.escape("...")
@@ -134,6 +132,7 @@ def preprocess_words_nltk(words: List[str]) -> List[str]:
     Returns:
         List[str]: Clean set of tokenized meaningful words.
     """
+    EN_STOPWORDS = set(stopwords.words("english"))
     clean_words = []
     for word in words:
         if (
@@ -164,6 +163,7 @@ def count_nltk(doc_name: str, document: str) -> Tuple[WordCounter, Sentences]:
 
 
 def count_spacy(document: str) -> WordCounter:
+    SPACY_EN = spacy.load("en_core_web_sm")
     doc: spacy.tokens.doc.Doc = SPACY_EN(document)
 
     def is_token_allowed(token):

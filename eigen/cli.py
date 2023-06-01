@@ -1,11 +1,8 @@
 import operator
-import random
-import string
+import os
 from enum import Enum
 from functools import reduce, partial
 from pathlib import Path
-from time import time
-from typing import Dict, Tuple
 
 import typer
 import nltk
@@ -33,25 +30,28 @@ def download():
     """Downloads NLTK dependencies: `punkt` and `stopwords`."""
     nltk.download("punkt")
     nltk.download("stopwords")
+    os.system("poetry run python -m spacy download en_core_web_sm")
+
 
 @app.command()
 def count(
-    path: Path,
+    input_path: Path,
+    output_path: Path,
     most_common: int = 5,
     example_sentences: int = 3,
     strategy: Strategy = Strategy.NLTK,
 ):
     """Calculates word-count of a set of documents on given path."""
-    assert path.is_dir(), "Provided path has to be a directory with documents."
+    assert input_path.is_dir() and output_path.is_dir(), "Provided paths have to be a directory with documents."
     counts = []
     fn = STRATEGY_FN[strategy]
-    (path / "processed").mkdir(exist_ok=True)
-    for p in path.glob("*.txt"):
+    for p in input_path.glob("*.txt"):
         doc = p.read_text(encoding="utf-8")
         cnt, sentences = fn(p.name, doc)
         counts.append(cnt)
         # write temporary documents
-        out_fp = (path / "processed" / p.name).open("w")
+        (output_path / strategy.value).mkdir(exist_ok=True)
+        out_fp = (output_path / strategy.value / p.name).open("w")
         for s in sentences:
             out_fp.write(s + "\n")
         out_fp.close()
@@ -59,7 +59,7 @@ def count(
     sum_counter: WordCounter = reduce(operator.add, counts, WordCounter())
 
     outputs = search(
-        partial(read_sentence, (path / "processed")),
+        partial(read_sentence, output_path),
         sum_counter, most_common, example_sentences
     )
     # build the output table
