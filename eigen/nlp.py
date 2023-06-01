@@ -162,9 +162,10 @@ def count_nltk(doc_name: str, document: str) -> Tuple[WordCounter, Sentences]:
     return (word_counts, fixed_sentences)
 
 
-def count_spacy(document: str) -> WordCounter:
+def count_spacy(doc_name: str, document: str) -> Tuple[WordCounter, Sentences]:
     SPACY_EN = spacy.load("en_core_web_sm")
     doc: spacy.tokens.doc.Doc = SPACY_EN(document)
+    word_counts = WordCounter()
 
     def is_token_allowed(token):
         return bool(
@@ -172,10 +173,14 @@ def count_spacy(document: str) -> WordCounter:
         )
 
     def preprocess_token(token):
-        return token.lemma_.strip().lower()
+        return str(token).strip().lower()
 
-    words = [preprocess_token(token) for token in doc if is_token_allowed(token)]
-    return Counter(words)
+    fixed_sentences = []
+    for i, s in enumerate(doc.sents):
+        fixed_sentences.append(preprocess_sentence(str(s)))
+        clean_words = [preprocess_token(w) for w in s if is_token_allowed(w)]
+        word_counts.update(clean_words, doc_name, i)
+    return (word_counts, fixed_sentences)
 
 
 # def count_scikit(documents: List[str]) -> scipy.sparse.csr_matrix:
