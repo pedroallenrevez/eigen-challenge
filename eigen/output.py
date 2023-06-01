@@ -83,6 +83,7 @@ def search(
 ) -> List[SearchOutput]:
     outputs = []
 
+
     for w, c in counter.most_common(most_common):
         examples = counter._localizer[w]
         doc_set = set([d for d, _ in examples])
@@ -92,7 +93,7 @@ def search(
             sentence = fn(doc_name, sent_idx)
             assert sentence != "", (doc_name, sent_idx, w)
             sents.append(highlight_sentence(sentence, w))
-            outputs.append((w, c, doc_set, sents))
+        outputs.append((w, c, doc_set, sents))
 
     return outputs
 
