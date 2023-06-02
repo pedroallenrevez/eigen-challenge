@@ -1,7 +1,7 @@
 import operator
 from functools import reduce
 
-from eigen import WordCounter
+from eigen.nlp import WordCounter
 
 
 def test_counter_update(test_sentences):

@@ -1,6 +1,6 @@
 import pytest
 
-from eigen import WordCounter
+from eigen.nlp import WordCounter
 
 
 @pytest.fixture
