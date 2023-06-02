@@ -4,8 +4,9 @@ from functools import reduce
 from pathlib import Path
 from typing import Callable
 
-from dagster import Dict, List, MetadataValue, Output, Tuple, asset
+from dagster import Dict, List, MetadataValue, Output, Tuple, asset, op
 
+from .db import RedisClient
 from .nlp import WordCounter, count_nltk, count_scikit, count_spacy
 from .output import SearchOutput, build_output_table, search
 
@@ -191,3 +192,14 @@ def search_most_common_scikit(
         words, the documents where they occur, and randomly picked example sentences.
     """
     return search_most_common(count_ocurrences_scikit)
+
+@asset
+def write_nltk_counter(
+    count_ocurrences_nltk: Tuple[WordCounter, Dict[str, List[str]]],
+):
+    client = RedisClient()
+    counter, sentences = count_ocurrences_nltk
+    for doc_name, sents in sentences.items():
+        client.add_document(doc_name, sents)
+    client.update_counter(counter)
+    return None

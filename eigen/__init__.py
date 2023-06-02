@@ -1,6 +1,6 @@
 from dagster import (AssetSelection, DefaultScheduleStatus, Definitions,
                      ScheduleDefinition, define_asset_job,
-                     load_assets_from_modules)
+                     load_assets_from_modules, FilesystemIOManager)
 
 from . import assets
 
@@ -15,8 +15,15 @@ eigen_schedule = ScheduleDefinition(
     default_status=DefaultScheduleStatus.RUNNING,
 )
 
+io_manager = FilesystemIOManager(
+    base_dir="dagster_output",  # Path is built relative to where `dagster dev` is run
+)
+
 defs = Definitions(
     assets=all_assets,
     # jobs=[eigen_job],  # Addition: add the job to Definitions object (see below)
     schedules=[eigen_schedule],
+    resources={
+        "io_manager": io_manager,
+    },
 )
