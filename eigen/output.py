@@ -1,21 +1,20 @@
 import random
-import string
 import re
+import string
 from io import StringIO
 from pathlib import Path
-from typing import List, Tuple, Callable
+from typing import Callable, List, Tuple
 
+from nltk.tokenize import word_tokenize
 from rich.console import Console
 from rich.table import Table
-from nltk.tokenize import word_tokenize
 
 from .nlp import WordCounter
-
 
 SearchOutput = Tuple[str, int, set, List[str]]
 
 
-def read_sentence(path:Path, document: str, sentence_idx: int) -> str:
+def read_sentence(path: Path, document: str, sentence_idx: int) -> str:
     """Opens a file handle for a document and reads a specific sentence.
 
     NOTE: Expects preprocesed documents that were sentence tokenized.
@@ -28,11 +27,12 @@ def read_sentence(path:Path, document: str, sentence_idx: int) -> str:
     Returns:
         str: Example sentence.
     """
-    path /= document 
+    path /= document
     with open(path, "r+", encoding="utf-8") as fp:
-        for i in range(sentence_idx+1):
+        for i in range(sentence_idx + 1):
             s = fp.readline()
     return s
+
 
 def highlight_sentence(
     sentence: str, search_term: str, black_white_output: bool = False
@@ -63,9 +63,11 @@ def highlight_sentence(
     START_TOKEN = "***" if black_white_output else "[magenta]"
     END_TOKEN = "***" if black_white_output else "[/magenta]"
 
-    PATTERN1 = lambda token: fr"(^| )(?i)({token})"
-    PATTERN = lambda token: fr"{PATTERN1(token)}([{re.escape(string.punctuation)} ]+|\.\\n)"
-    SUB_PATTERN = fr"\1{START_TOKEN}\2{END_TOKEN}\3"
+    PATTERN1 = lambda token: rf"(^| )(?i)({token})"
+    PATTERN = (
+        lambda token: rf"{PATTERN1(token)}([{re.escape(string.punctuation)} ]+|\.\\n)"
+    )
+    SUB_PATTERN = rf"\1{START_TOKEN}\2{END_TOKEN}\3"
 
     for token in word_tokenize(sentence):
         # if distance(token.lower(), search_term) == 0:
@@ -75,10 +77,8 @@ def highlight_sentence(
     return re.sub(PATTERN(token), SUB_PATTERN, sentence)
 
 
-
 def search(
-    fn: Callable,
-    counter: WordCounter, most_common: int = 5, example_sentences: int = 3
+    fn: Callable, counter: WordCounter, most_common: int = 5, example_sentences: int = 3
 ) -> List[SearchOutput]:
     """Searches and highlights terms in a sentence, using `highlight_sentence`
     function.
@@ -127,7 +127,11 @@ def build_output_table(outputs: List[SearchOutput]) -> str:
     table.add_column("Docs", style="magenta")
     table.add_column("Sentences", justify="left", style="green")
     for w, c, doc_set, sents in outputs:
-        table.add_row(f"{w}({c})", str(doc_set), "".join([f"{i}. {s}\n" for i, s in enumerate(sents)]))
+        table.add_row(
+            f"{w}({c})",
+            str(doc_set),
+            "".join([f"{i}. {s}\n" for i, s in enumerate(sents)]),
+        )
 
     console = Console()
     console.print(table)

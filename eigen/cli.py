@@ -1,14 +1,14 @@
 import operator
 import os
 from enum import Enum
-from functools import reduce, partial
+from functools import partial, reduce
 from pathlib import Path
 
-import typer
 import nltk
+import typer
 
 from .nlp import WordCounter, count_nltk, count_scikit, count_spacy
-from .output import build_output_table, search, read_sentence
+from .output import build_output_table, read_sentence, search
 
 app = typer.Typer()
 
@@ -24,6 +24,7 @@ STRATEGY_FN = {
     Strategy.NLTK: count_nltk,
     Strategy.SCIKIT: count_scikit,
 }
+
 
 @app.command()
 def download():
@@ -43,7 +44,9 @@ def count(
     strategy: Strategy = Strategy.NLTK,
 ):
     """Calculates word-count of a set of documents on given path."""
-    assert input_path.is_dir() and output_path.is_dir(), "Provided paths have to be a directory with documents."
+    assert (
+        input_path.is_dir() and output_path.is_dir()
+    ), "Provided paths have to be a directory with documents."
     counts = []
     fn = STRATEGY_FN[strategy]
     for p in input_path.glob("*.txt"):
@@ -61,7 +64,9 @@ def count(
 
     outputs = search(
         partial(read_sentence, (output_path / strategy.value)),
-        sum_counter, most_common, example_sentences
+        sum_counter,
+        most_common,
+        example_sentences,
     )
     # Build the output table
     build_output_table(outputs)

@@ -1,5 +1,6 @@
 import re
 import string
+
 from nltk.tokenize import sent_tokenize, word_tokenize
 
 from eigen.nlp import WordCounter, preprocess_sentence, preprocess_words_nltk
@@ -23,8 +24,8 @@ def test_search_term():
     END_TOKEN = "***"
     TOKEN = "america"
 
-    PATTERN1 = lambda token: fr"(^|\s)(?i)({token})"
-    SUB_PATTERN = fr"\1{START_TOKEN}\2{END_TOKEN}"
+    PATTERN1 = lambda token: rf"(^|\s)(?i)({token})"
+    SUB_PATTERN = rf"\1{START_TOKEN}\2{END_TOKEN}"
     assert bool(re.match(PATTERN1(TOKEN), " america"))
     assert bool(re.match(PATTERN1(TOKEN), " America"))
     assert bool(re.match(PATTERN1(TOKEN), "America"))
@@ -32,9 +33,10 @@ def test_search_term():
     res = re.sub(PATTERN1(TOKEN), SUB_PATTERN, sentence)
     assert res == " ***america*** "
 
-
-    PATTERN = lambda token: fr"{PATTERN1(token)}([{re.escape(string.punctuation)} ]+|\.\\n)"
-    SUB_PATTERN = fr"\1{START_TOKEN}\2{END_TOKEN}\3"
+    PATTERN = (
+        lambda token: rf"{PATTERN1(token)}([{re.escape(string.punctuation)} ]+|\.\\n)"
+    )
+    SUB_PATTERN = rf"\1{START_TOKEN}\2{END_TOKEN}\3"
 
     sentence = " america "
     res = re.sub(PATTERN(TOKEN), SUB_PATTERN, sentence)

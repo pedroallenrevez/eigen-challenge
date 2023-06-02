@@ -1,18 +1,14 @@
+import re
+import string
+from collections import Counter
+from typing import Any, Dict, List, Optional, Tuple
+
 import nltk
 import scipy
 import spacy
-
-import re
-from collections import Counter
-
-from sklearn.feature_extraction.text import CountVectorizer
-
-
-import string
-from typing import Any, Dict, List, Optional, Tuple
-
 from nltk.corpus import stopwords
 from nltk.tokenize import sent_tokenize, word_tokenize
+from sklearn.feature_extraction.text import CountVectorizer
 
 PUNKT = string.punctuation
 # Define the regex pattern to match punctuation
@@ -51,7 +47,6 @@ RGX_SCIKIT_EDGE_CASE = [
     re.escape("d"),
     re.escape("em"),
     re.escape("t"),
-
 ]
 # RGX_PATTERN = re.compile(f'{RGX_PUNKT}|{RGX_ELLIPSIS}|{RGX_QUOTES}|{RGX_DQUOTES}|{RGX_BACKTICK}|{RGX_HIFEN}')
 RGX_PATTERN = re.compile("|".join(RGX_EXTENDED_PUNKT + RGX_SUFFIXES))
@@ -167,7 +162,7 @@ def preprocess_words_nltk(words: List[str]) -> List[str]:
 def count_nltk(doc_name: str, document: str) -> Tuple[WordCounter, Sentences]:
     """Counts word occurrences in a document, by using the NLTK library.
 
-    Check the `preprocess_words_nltk` for more details on the preprocessing 
+    Check the `preprocess_words_nltk` for more details on the preprocessing
     required for the tokens.
 
     Args:
@@ -212,11 +207,9 @@ def count_spacy(doc_name: str, document: str) -> Tuple[WordCounter, Sentences]:
 
     def is_token_allowed(token):
         return bool(
-            token 
-            and str(token).strip() 
-            and not token.is_stop 
-            and not token.is_punct
+            token and str(token).strip() and not token.is_stop and not token.is_punct
         )
+
     preprocess_token = lambda token: str(token).strip().lower()
 
     fixed_sentences = []
@@ -264,7 +257,12 @@ def count_scikit(doc_name: str, document: str) -> Tuple[WordCounter, Sentences]:
 
     # A word is valid if it's not i.e: 's, 've, s, t, ve etc.
     # Scikit is not very helpful parsing these cases
-    valid_word = lambda word: re.compile("|".join(RGX_SUFFIXES + RGX_SCIKIT_EDGE_CASE)).sub("", word) != ""
+    valid_word = (
+        lambda word: re.compile("|".join(RGX_SUFFIXES + RGX_SCIKIT_EDGE_CASE)).sub(
+            "", word
+        )
+        != ""
+    )
 
     # Manually add vocabulary to the word-counter
     for i, word in enumerate(vocabulary):
