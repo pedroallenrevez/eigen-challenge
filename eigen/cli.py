@@ -1,11 +1,13 @@
 import operator
 import os
+import time
 from enum import Enum
 from functools import partial, reduce
 from pathlib import Path
 
 import nltk
 import typer
+from loguru import logger
 
 from .nlp import WordCounter, count_nltk, count_scikit, count_spacy
 from .output import build_output_table, read_sentence, search
@@ -44,6 +46,7 @@ def count(
     strategy: Strategy = Strategy.NLTK,
 ):
     """Calculates word-count of a set of documents on given path."""
+    start_time = time.time()
     assert (
         input_path.is_dir() and output_path.is_dir()
     ), "Provided paths have to be a directory with documents."
@@ -70,6 +73,8 @@ def count(
     )
     # Build the output table
     build_output_table(outputs)
+    end_time = time.time()
+    logger.warning(f"Took {end_time - start_time} seconds.")
 
 
 def main():
