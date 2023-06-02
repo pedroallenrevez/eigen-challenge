@@ -148,7 +148,7 @@ It is not needed for running this project, and are personal files - Poetry manag
 ## Learning Conclusions
 
 - `dagster` - how to define data assets, how the graph dependency is built, overall use of the interface.
-- `direnv` - a way of defining development environments based on file-system access and how to properly set it up on a non-NixOs Linux distribution:
+- `direnv` - a way of defining development environments based on file-system access by changing directory to the folder, it activates the environment. How to properly set it up on a non-NixOs Linux distribution:
   - write a config file at `~/.config/nix/nix.conf` with:
   ```
   experimental-features = nix-command flakes
