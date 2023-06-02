@@ -81,7 +81,11 @@ def highlight_sentence(
 
 
 def search(
-    fn: Callable, counter: WordCounter, most_common: int = 5, example_sentences: int = 3
+    fn: Callable,
+    counter: WordCounter,
+    most_common: int = 5,
+    example_sentences: int = 3,
+    black_white_output: bool = False,
 ) -> List[SearchOutput]:
     """Searches and highlights terms in a sentence, using `highlight_sentence`
     function.
@@ -112,7 +116,9 @@ def search(
             doc_name, sent_idx = random.choice(examples)
             sentence = fn(doc_name, sent_idx)
             assert sentence != "", (doc_name, sent_idx, w)
-            sents.append(highlight_sentence(sentence, w))
+            sents.append(
+                highlight_sentence(sentence, w, black_white_output=black_white_output)
+            )
         outputs.append((w, c, doc_set, sents))
 
     return outputs

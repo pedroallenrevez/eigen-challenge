@@ -1,9 +1,11 @@
 import operator
 import os
+import shutil
 import time
 from enum import Enum
 from functools import partial, reduce
 from pathlib import Path
+from typing import Optional
 
 import nltk
 import typer
@@ -35,6 +37,24 @@ def download():
     nltk.download("punkt")
     nltk.download("stopwords")
     os.system("poetry run python -m spacy download en_core_web_sm")
+
+
+@app.command()
+def dagster_ingest():
+    """Every 1-minute adds a document to the input folder, to be ingested by dagster.
+    Dagster as a scheduled job that runs every minute, that will consume the document,
+    make the counts and add it onto a database and update the overall count values.
+    """
+    os.system("poetry run dagster dev &")
+    os.system("rm input/*")
+    last_name: Optional[Path] = None
+    for p in Path("./dev").glob("*.txt"):
+        print(f"Adding {p.name} to input folder. Waiting 1minute....")
+        if last_name is not None:
+            os.system(f"rm {last_name.as_posix()}")
+        last_name = Path("./input") / p.name
+        shutil.copy(p, last_name)
+        time.sleep(60)
 
 
 @app.command()

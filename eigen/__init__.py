@@ -1,5 +1,6 @@
-from dagster import (AssetSelection, Definitions, ScheduleDefinition,
-                     define_asset_job, load_assets_from_modules)
+from dagster import (AssetSelection, DefaultScheduleStatus, Definitions,
+                     ScheduleDefinition, define_asset_job,
+                     load_assets_from_modules)
 
 from . import assets
 
@@ -10,7 +11,8 @@ eigen_job = define_asset_job("eigen_job", selection=AssetSelection.all())
 
 eigen_schedule = ScheduleDefinition(
     job=eigen_job,
-    cron_schedule="0 * * * *",  # every hour
+    cron_schedule="* * * * *",  # every minute
+    default_status=DefaultScheduleStatus.RUNNING,
 )
 
 defs = Definitions(

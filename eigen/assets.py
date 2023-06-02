@@ -128,6 +128,7 @@ def search_most_common(
         counter,
         most_common=5,
         example_sentences=3,
+        black_white_output=True,
     )
     table = build_output_table(outputs)
     metadata = {
