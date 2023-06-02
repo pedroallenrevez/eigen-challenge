@@ -168,3 +168,4 @@ It is not needed for running this project, and are personal files - Poetry manag
     }
   ];
   ```
+- `ruff` tested and used ruff to lint the codebase, instead of `autoflake8` which ended up being much faster.
