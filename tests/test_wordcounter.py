@@ -37,3 +37,11 @@ def test_counter_add(test_sentences):
 
     assert counter._counter == sum_counter._counter
     assert counter._localizer == sum_counter._localizer
+
+
+def test_counter_json(test_counter):
+    counter, _ = test_counter
+    json_value = counter.to_json()
+    from_json = WordCounter.from_json(json_value)
+    assert from_json._counter == counter._counter
+    assert from_json._localizer == counter._localizer

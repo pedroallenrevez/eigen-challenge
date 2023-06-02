@@ -1,3 +1,4 @@
+import json
 import re
 import string
 from collections import Counter
@@ -53,12 +54,30 @@ Sentence = str
 # document name, sentence index
 WordLoc = Tuple[str, int]
 Sentences = List[Sentence]
+JSONStr = str
 
 
 class WordCounter:
     def __init__(self):
         self._counter = Counter()
         self._localizer: Dict[Word, List[WordLoc]] = {}
+
+    def to_json(self) -> JSONStr:
+        dct = {}
+        for w in self._counter:
+            dct[w] = {}
+            dct[w]["count"] = self._counter[w]
+            dct[w]["examples"] = self._localizer[w]
+        return json.dumps(dct)
+
+    @classmethod
+    def from_json(cls, json_string: JSONStr) -> "WordCounter":
+        json_values = json.loads(json_string)
+        counter = cls()
+        for word, values in json_values.items():
+            counter._counter[word] = values["count"]
+            counter._localizer[word] = [(l[0], l[1]) for l in values["examples"]]
+        return counter
 
     def update(self, words: List[Word], doc_name: str, sentence_idx: int):
         """Update one time per sentence.
@@ -133,8 +152,8 @@ def preprocess_words_nltk(words: List[str]) -> List[str]:
     4. Remove apostrophe cases ('ve, 're, etc.)
 
     Since `word_tokenize` from nltk already separates words from punctuation like
-    i.e. hard-earned, into ["hard-earned", ","], we can easily separate actual 
-    punctuation from word formation. Additionally, tokenizing `could've` will result in 
+    i.e. hard-earned, into ["hard-earned", ","], we can easily separate actual
+    punctuation from word formation. Additionally, tokenizing `could've` will result in
     ["could", "'ve"] in which case we can easily detect with regex.
 
 
@@ -167,7 +186,7 @@ def count_nltk(doc_name: str, document: str) -> Tuple[WordCounter, Sentences]:
         document (str): the whole document itself.
 
     Returns:
-        Tuple[WordCounter, Sentences]: returns words occurrences, and corresponding 
+        Tuple[WordCounter, Sentences]: returns words occurrences, and corresponding
         preprocessed sentences.
     """
     word_counts = WordCounter()
@@ -197,7 +216,7 @@ def count_spacy(doc_name: str, document: str) -> Tuple[WordCounter, Sentences]:
         document (str): the whole document itself.
 
     Returns:
-        Tuple[WordCounter, Sentences]: returns words occurrences, and corresponding 
+        Tuple[WordCounter, Sentences]: returns words occurrences, and corresponding
         preprocessed sentences.
     """
     SPACY_EN = spacy.load("en_core_web_sm")
@@ -234,7 +253,7 @@ def count_scikit(doc_name: str, document: str) -> Tuple[WordCounter, Sentences]:
         document (str): the whole document itself.
 
     Returns:
-        Tuple[WordCounter, Sentences]: returns words occurrences, and corresponding 
+        Tuple[WordCounter, Sentences]: returns words occurrences, and corresponding
         preprocessed sentences.
     """
     vectorizer = CountVectorizer(
@@ -248,7 +267,7 @@ def count_scikit(doc_name: str, document: str) -> Tuple[WordCounter, Sentences]:
     word_counts = WordCounter()
     sentences: List[str] = sent_tokenize(document)
     fixed_sentences: List[str] = [preprocess_sentence(s) for s in sentences]
-    # Fit the vectorizer to the documents and transform the documents into a 
+    # Fit the vectorizer to the documents and transform the documents into a
     # word-count matrix
     X = vectorizer.fit_transform(sentences)
 
