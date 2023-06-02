@@ -114,6 +114,13 @@ The main steps of execution are the following:
 
 ### Solution: NLTK
 
+### Timers
+
+| Scikit | Spacy | NLTK |
+| ------ | ----- | ---- |
+| 0.15s  | 6s    | 0.30s|
+
+
 
 ## Notes on Nix
 
