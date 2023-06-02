@@ -62,7 +62,6 @@ class WordCounter:
         self._counter = Counter()
         self._localizer: Dict[Word, List[WordLoc]] = {}
 
-
     def to_dict(self) -> dict:
         dct = {}
         for w in self._counter:
@@ -84,7 +83,9 @@ class WordCounter:
         counter = cls()
         for word, values in dct.items():
             counter._counter[word] = values["count"]
-            counter._localizer[word] = [(l[0], l[1]) for l in values["examples"]]
+            counter._localizer[word] = [
+                (example[0], example[1]) for example in values["examples"]
+            ]
         return counter
 
     def update(self, words: List[Word], doc_name: str, sentence_idx: int):

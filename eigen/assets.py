@@ -4,7 +4,7 @@ from functools import reduce
 from pathlib import Path
 from typing import Callable
 
-from dagster import Dict, List, MetadataValue, Output, Tuple, asset, op
+from dagster import Dict, List, MetadataValue, Output, Tuple, asset
 
 from .db import RedisClient
 from .nlp import WordCounter, count_nltk, count_scikit, count_spacy
@@ -192,6 +192,7 @@ def search_most_common_scikit(
         words, the documents where they occur, and randomly picked example sentences.
     """
     return search_most_common(count_ocurrences_scikit)
+
 
 @asset
 def write_nltk_counter(

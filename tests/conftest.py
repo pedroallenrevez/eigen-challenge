@@ -31,8 +31,8 @@ def test_sentences():
 def test_preprocess_sentences():
     sentences = [
         (
-            "Let me begin by saying thanks to all you who've traveled, from far and wide, "
-            " to brave the cold today."
+            "Let me begin by saying thanks to all you who've traveled, from far "
+            "and wide, to brave the cold today."
         )
     ]
     return sentences

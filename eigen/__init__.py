@@ -1,6 +1,6 @@
 from dagster import (AssetSelection, DefaultScheduleStatus, Definitions,
-                     ScheduleDefinition, define_asset_job,
-                     load_assets_from_modules, FilesystemIOManager)
+                     FilesystemIOManager, ScheduleDefinition, define_asset_job,
+                     load_assets_from_modules)
 
 from . import assets
 
