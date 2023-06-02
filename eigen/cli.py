@@ -57,7 +57,6 @@ def count(
         out_fp.close()
     # gather all WordCounters into one
     sum_counter: WordCounter = reduce(operator.add, counts, WordCounter())
-    #print(sum_counter._counter)
 
     outputs = search(
         partial(read_sentence, (output_path / strategy.value)),

@@ -42,6 +42,17 @@ RGX_SUFFIXES = [
     re.escape("'d"),
     re.escape("'em"),
 ]
+RGX_SCIKIT_EDGE_CASE = [
+    re.escape("ve"),
+    re.escape("re"),
+    re.escape("s"),
+    re.escape("m"),
+    re.escape("ll"),
+    re.escape("d"),
+    re.escape("em"),
+    re.escape("t"),
+
+]
 # RGX_PATTERN = re.compile(f'{RGX_PUNKT}|{RGX_ELLIPSIS}|{RGX_QUOTES}|{RGX_DQUOTES}|{RGX_BACKTICK}|{RGX_HIFEN}')
 RGX_PATTERN = re.compile("|".join(RGX_EXTENDED_PUNKT + RGX_SUFFIXES))
 
@@ -97,7 +108,7 @@ class WordCounter:
             WordCounter: A summed up WordCounter.
         """
         self._counter += other._counter
-        for k, v in other._localizer.items():
+        for k, _ in other._localizer.items():
             if k in self._localizer:
                 self._localizer[k] = self._localizer[k] + other._localizer[k]
             else:
@@ -169,11 +180,12 @@ def count_spacy(doc_name: str, document: str) -> Tuple[WordCounter, Sentences]:
 
     def is_token_allowed(token):
         return bool(
-            token and str(token).strip() and not token.is_stop and not token.is_punct
+            token 
+            and str(token).strip() 
+            and not token.is_stop 
+            and not token.is_punct
         )
-
-    def preprocess_token(token):
-        return str(token).strip().lower()
+    preprocess_token = lambda token: str(token).strip().lower()
 
     fixed_sentences = []
     for i, s in enumerate(doc.sents):
@@ -183,22 +195,45 @@ def count_spacy(doc_name: str, document: str) -> Tuple[WordCounter, Sentences]:
     return (word_counts, fixed_sentences)
 
 
-# def count_scikit(documents: List[str]) -> scipy.sparse.csr_matrix:
-def count_scikit(doc_name: str, document: str) -> WordCounter:
-    # Create an instance of CountVectorizer
+def count_scikit(doc_name: str, document: str) -> Tuple[WordCounter, Sentences]:
     vectorizer = CountVectorizer(
-        token_pattern=r"\b\w+\b",  # Keep only words consisting of alphanumeric characters
+        token_pattern=r"\b[a-zA-Z]+\b",  # Keep only words consisting, no numbers
         lowercase=True,  # Convert all words to lowercase
         stop_words="english",  # Remove stopwords
         strip_accents="unicode",  # Strip accents during preprocessing
         encoding="utf-8",  # Set encoding type
         decode_error="replace",  # Replace decoding errors
     )
-
+    word_counts = WordCounter()
+    sentences: List[str] = sent_tokenize(document)
+    fixed_sentences: List[str] = [preprocess_sentence(s) for s in sentences]
     # Fit the vectorizer to the documents and transform the documents into a word-count matrix
-    X = vectorizer.fit_transform([document])
+    X = vectorizer.fit_transform(sentences)
 
-    counter = Counter()
-    for word, count in zip(vectorizer.get_feature_names_out(), X.toarray()[0]):
-        counter[word] = count
-    return counter
+    # Sum matrix of word occurences
+    x_word_count = X.sum(axis=0)
+    # All matched words
+    vocabulary = vectorizer.get_feature_names_out()
+
+    # A word is valid if it's not i.e: 's, 've, s, t, ve etc.
+    # Scikit is not very helpful parsing these cases
+    valid_word = lambda word: re.compile("|".join(RGX_SUFFIXES + RGX_SCIKIT_EDGE_CASE)).sub("", word) != ""
+
+    # Manually add vocabulary to the word-counter
+    for i, word in enumerate(vocabulary):
+        if not valid_word(word):
+            continue
+        count = x_word_count[0, i]
+        word_counts._counter[word] = count
+    # Manually add sentence occurrences
+    for sent_idx, row in enumerate(X):
+        for idx in row.indices:
+            word = vocabulary[idx]
+            if not valid_word(word):
+                continue
+            value = (doc_name, sent_idx)
+            if word in word_counts._localizer:
+                word_counts._localizer[word].append(value)
+            else:
+                word_counts._localizer[word] = [value]
+    return (word_counts, fixed_sentences)
