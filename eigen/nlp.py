@@ -1,10 +1,8 @@
 import re
 import string
 from collections import Counter
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Dict, List, Tuple
 
-import nltk
-import scipy
 import spacy
 from nltk.corpus import stopwords
 from nltk.tokenize import sent_tokenize, word_tokenize
