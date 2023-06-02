@@ -115,11 +115,20 @@ class WordCounter:
                 self._localizer[k] = other._localizer[k]
         return self
 
-    # def __repr__(self) -> str:
-    #     return str(self._counter)
-
 
 def preprocess_sentence(sentence: str) -> str:
+    """Preprocess a sentence by removing the newline characters.
+    This is a needed step, because preprocessed sentences are queried for
+    the search terms.
+    When being written to a file, it would result in bad match-up between
+    sentence index and placement on the file
+
+    Args:
+        sentence (str): to preprocess.
+
+    Returns:
+        str: sentence with no newline characters.
+    """
     return sentence.replace("\n", "")
 
 
@@ -156,7 +165,18 @@ def preprocess_words_nltk(words: List[str]) -> List[str]:
 
 
 def count_nltk(doc_name: str, document: str) -> Tuple[WordCounter, Sentences]:
-    """Preprocess a unique document and apply transformations:"""
+    """Counts word occurrences in a document, by using the NLTK library.
+
+    Check the `preprocess_words_nltk` for more details on the preprocessing 
+    required for the tokens.
+
+    Args:
+        doc_name (str): the name of the document.
+        document (str): the whole document itself.
+
+    Returns:
+        Tuple[WordCounter, Sentences]: returns words occurrences, and corresponding preprocessed sentences.
+    """
     word_counts = WordCounter()
     sentences: List[str] = sent_tokenize(document)
     fixed_sentences: List[str] = []
@@ -174,6 +194,18 @@ def count_nltk(doc_name: str, document: str) -> Tuple[WordCounter, Sentences]:
 
 
 def count_spacy(doc_name: str, document: str) -> Tuple[WordCounter, Sentences]:
+    """Counts word occurrences in a document, by using the spaCy library.
+
+    Preprocessing is made by using the NLP engine made by spaCy, so no need
+    to download extra models like NLTK.
+
+    Args:
+        doc_name (str): the name of the document.
+        document (str): the whole document itself.
+
+    Returns:
+        Tuple[WordCounter, Sentences]: returns words occurrences, and corresponding preprocessed sentences.
+    """
     SPACY_EN = spacy.load("en_core_web_sm")
     doc: spacy.tokens.doc.Doc = SPACY_EN(document)
     word_counts = WordCounter()
@@ -196,6 +228,21 @@ def count_spacy(doc_name: str, document: str) -> Tuple[WordCounter, Sentences]:
 
 
 def count_scikit(doc_name: str, document: str) -> Tuple[WordCounter, Sentences]:
+    """Counts word occurrences in a document, by using the scikit-learn library.
+
+    Preprocessing is made by using CountVectorizer itself and it's API.
+    The most dirty solution of them all, highly noisy, and requires more preprocessing
+    steps in order to "make sense".
+
+    Difficulty in parsing tokens like `'s`, `'ve` and other apostrophe cases.
+
+    Args:
+        doc_name (str): the name of the document.
+        document (str): the whole document itself.
+
+    Returns:
+        Tuple[WordCounter, Sentences]: returns words occurrences, and corresponding preprocessed sentences.
+    """
     vectorizer = CountVectorizer(
         token_pattern=r"\b[a-zA-Z]+\b",  # Keep only words consisting, no numbers
         lowercase=True,  # Convert all words to lowercase

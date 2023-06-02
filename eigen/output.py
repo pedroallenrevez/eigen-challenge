@@ -3,16 +3,16 @@ import string
 import re
 from io import StringIO
 from pathlib import Path
-from typing import List, Dict, Tuple, Callable
-from functools import partial
+from typing import List, Tuple, Callable
 
-from Levenshtein import distance
 from rich.console import Console
 from rich.table import Table
 from nltk.tokenize import word_tokenize
 
 from .nlp import WordCounter
 
+
+SearchOutput = Tuple[str, int, set, List[str]]
 
 
 def read_sentence(path:Path, document: str, sentence_idx: int) -> str:
@@ -75,14 +75,28 @@ def highlight_sentence(
     return re.sub(PATTERN(token), SUB_PATTERN, sentence)
 
 
-SearchOutput = Tuple[str, int, set, List[str]]
 
 def search(
     fn: Callable,
     counter: WordCounter, most_common: int = 5, example_sentences: int = 3
 ) -> List[SearchOutput]:
-    outputs = []
+    """Searches and highlights terms in a sentence, using `highlight_sentence`
+    function.
+    1. Queries `most_common` words from `counter` arguments;
+    2. Looks for term occurrences and corresponding documents;
+    3. Picks a number of `example_sentences`
+    4. Highlights the term in the sentence.
 
+    Args:
+        fn (Callable): Which function to use to search for terms;
+        counter (WordCounter): An object with word occurrences, with term occurrences in sentences.
+        most_common (int, optional): the most common word occurrences. Defaults to 5.
+        example_sentences (int, optional): the number of example sentences with term occurrence. Defaults to 3.
+
+    Returns:
+        List[SearchOutput]: A list of tuples, of (word, occurrences, set of documents, example sentences)
+    """
+    outputs = []
 
     for w, c in counter.most_common(most_common):
         examples = counter._localizer[w]
@@ -99,6 +113,15 @@ def search(
 
 
 def build_output_table(outputs: List[SearchOutput]) -> str:
+    """Builds a `rich` output table from a list of search outputs and prints it.
+
+    Args:
+        outputs (List[SearchOutput]): most common words, it's count, documents where it appears,
+        and example sentences.
+
+    Returns:
+        str: A rendered table that can be printed.
+    """
     table = Table(title="Most common word occurrences.")
     table.add_column("Word", justify="right", style="cyan", no_wrap=True)
     table.add_column("Docs", style="magenta")

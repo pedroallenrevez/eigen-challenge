@@ -27,7 +27,8 @@ STRATEGY_FN = {
 
 @app.command()
 def download():
-    """Downloads NLTK dependencies: `punkt` and `stopwords`."""
+    """Downloads NLTK dependencies: `punkt` and `stopwords`.
+    Also downloads spacy english language model."""
     nltk.download("punkt")
     nltk.download("stopwords")
     os.system("poetry run python -m spacy download en_core_web_sm")
@@ -49,21 +50,21 @@ def count(
         doc = p.read_text(encoding="utf-8")
         cnt, sentences = fn(p.name, doc)
         counts.append(cnt)
-        # write temporary documents
+        # Write temporary documents
         (output_path / strategy.value).mkdir(exist_ok=True)
         out_fp = (output_path / strategy.value / p.name).open("w")
         for s in sentences:
             out_fp.write(s + "\n")
         out_fp.close()
-    # gather all WordCounters into one
+    # Gather all WordCounters into one
     sum_counter: WordCounter = reduce(operator.add, counts, WordCounter())
 
     outputs = search(
         partial(read_sentence, (output_path / strategy.value)),
         sum_counter, most_common, example_sentences
     )
-    # build the output table
-    table = build_output_table(outputs)
+    # Build the output table
+    build_output_table(outputs)
 
 
 def main():
