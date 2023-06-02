@@ -170,11 +170,12 @@ It is not needed for running this project, and are personal files - Poetry manag
   ```
     - `AssetSelection` allows us to select assets define in our dagster definitions for a job.
     - define a job with `Definitions` and related assets
-    - define a schedule for the job with
+    - define a schedule for the job with, and activate the schedule programatically
     ```python
     eigen_schedule = ScheduleDefinition(
         job=eigen_job,
         cron_schedule="0 * * * *",  # every hour
+        default_status=DefaultScheduleStatus.RUNNING
     )
     ```
 - `direnv` - a way of defining development environments based on file-system access by changing directory to the folder, it activates the environment. How to properly set it up on a non-NixOs Linux distribution:
