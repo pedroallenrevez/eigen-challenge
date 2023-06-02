@@ -2,6 +2,8 @@
 [![Poetry](https://img.shields.io/badge/Python-Poetry-yellow?style=for-the-badge&logo=Python)](https://python-poetry.org/)
 [![Nix](https://img.shields.io/badge/Nix-Environments-yellow?style=for-the-badge&logo=NixOS)](https://nixos.org/)
 [![Standard](https://img.shields.io/badge/Nix-Standard-yellow?style=for-the-badge&logo=NixOS)](https://std.divnix.com/)
+[![Docker](https://img.shields.io/badge/Docker-Compose-yellow?style=for-the-badge&logo=Docker)](https://docker.com)
+[![Redis](https://img.shields.io/badge/Redis-JSON-yellow?style=for-the-badge&logo=Redis)](https://redis.com)
 
 
 
@@ -199,3 +201,5 @@ It is not needed for running this project, and are personal files - Poetry manag
   ];
   ```
 - `ruff` tested and used ruff to lint the codebase, instead of `autoflake8` which ended up being much faster.
+- `redis.json` - how to use redis JSON database to store documents, and redis-insight to inspect the database
+  - look at `eigen/db.py` for a simple API demonstration
