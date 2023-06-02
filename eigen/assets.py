@@ -1,4 +1,5 @@
 import operator
+import typing
 from functools import reduce
 from pathlib import Path
 from typing import Callable
@@ -109,7 +110,7 @@ def count_ocurrences_scikit(
 
 def search_most_common(
     count_ocurrences: Tuple[WordCounter, Dict[str, List[str]]]
-) -> Output[List[SearchOutput]]:
+) -> Output[typing.List[SearchOutput]]:
     """Runs the search algorithm to look for sentences that have the most common search 
     terms.
 
@@ -140,7 +141,7 @@ def search_most_common(
 @asset
 def search_most_common_nltk(
     count_ocurrences_nltk: Tuple[WordCounter, Dict[str, List[str]]]
-) -> Output[List[SearchOutput]]:
+) -> Output[typing.List[SearchOutput]]:
     """NLTK version of the search algorithm.
     Look at `search_most_common` for more details.
 
@@ -158,7 +159,7 @@ def search_most_common_nltk(
 @asset
 def search_most_common_spacy(
     count_ocurrences_spacy: Tuple[WordCounter, Dict[str, List[str]]]
-) -> Output[List[SearchOutput]]:
+) -> Output[typing.List[SearchOutput]]:
     """spaCy version of the search algorithm.
     Look at `search_most_common` for more details.
 
@@ -176,7 +177,7 @@ def search_most_common_spacy(
 @asset
 def search_most_common_scikit(
     count_ocurrences_scikit: Tuple[WordCounter, Dict[str, List[str]]]
-) -> Output[List[SearchOutput]]:
+) -> Output[typing.List[SearchOutput]]:
     """Scikit version of the search algorithm.
     Look at `search_most_common` for more details.
 
