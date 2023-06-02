@@ -30,6 +30,7 @@ in the documents.
 ### Extra Personal Goals
 
 1. Learn Dagster workflows (in offline environment benchmarking)
+2. Learn Redis JSON and Redis-insight dashboard, as well as the redis python API
 
 ## Usage Guide
 
@@ -69,7 +70,7 @@ Usage: eigen [OPTIONS] COMMAND [ARGS]...
 To run the CLI application do:
 ```
 $ poetry run eigen download 
-$ poetry run eigen count dev/ --most-common 5 --example-sentences 3
+$ poetry run eigen count dev output --most-common 5 --example-sentences 3 --strategy nltk|scikit|spacy
 ```
 
 ## Usage Guide - Dagster
@@ -136,6 +137,22 @@ We have to manually build our WordCounter, and thus the implemented solution is 
 | 0.15s  | 6s    | 0.30s|
 
 
+### Dagster and Redis interaction
+
+In the learning experience of Dagster, the objective was to follow the basic tutorial and implement a basic solution that would emulate a real-time system. The following happens:
+1. Every minute a document is added onto the `input` folder;
+2. A Scheduled Dagster job is ran every minute to consume the document, where word counts are made;
+3. The resulting preprocessed document is added onto the Redis JSON database, as well as the counter;
+4. If a counter already exists, it's values are updated with the new stream.
+
+> NOTE: Database interaction is made through the Dagster `asset` API, which might not be the best approach. Instead we could use an IOManager that would interact with the database, but I looked no further into the topic.
+
+To test this interaction you should run:
+```
+$ docker-compose up -d
+$ poetry run eigen dagster-ingest
+```
+You can check the results at `localhost:3000` for the Dagster dashboard, and at `localhost:8001` for redis-insight dashboard, where you can check the objects added onto the database.
 
 ## Notes on Nix
 
@@ -180,6 +197,8 @@ It is not needed for running this project, and are personal files - Poetry manag
         default_status=DefaultScheduleStatus.RUNNING
     )
     ```
+    - defining `IOManagers` to output dagster asset artifacts
+      - to filesystem using `FileSystemIOManager`
 - `direnv` - a way of defining development environments based on file-system access by changing directory to the folder, it activates the environment. How to properly set it up on a non-NixOs Linux distribution:
   - write a config file at `~/.config/nix/nix.conf` with:
   ```
