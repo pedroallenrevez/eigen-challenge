@@ -37,7 +37,8 @@ def read_sentence(path: Path, document: str, sentence_idx: int) -> str:
 def highlight_sentence(
     sentence: str, search_term: str, black_white_output: bool = False
 ) -> str:
-    """Searches for the `search_term` within a sentence, within constraints of the following variations:
+    """Searches for the `search_term` within a sentence, within constraints of the 
+    following variations:
     (assuming search term is `america` the following would match)
     1. `america,`
     2. `america.\n'
@@ -46,8 +47,8 @@ def highlight_sentence(
     The following would NOT match:
     1. `American`
 
-    After the term is found, it is "highlighted", with `rich` library where it is colorized,
-    or wrapper in `***` in case the output is black and white.
+    After the term is found, it is "highlighted", with `rich` library where it is 
+    colorized, or wrapper in `***` in case the output is black and white.
 
     Uses the levenshtein distance to calculate distance between words.
 
@@ -63,10 +64,10 @@ def highlight_sentence(
     START_TOKEN = "***" if black_white_output else "[magenta]"
     END_TOKEN = "***" if black_white_output else "[/magenta]"
 
-    PATTERN1 = lambda token: rf"(^| )(?i)({token})"
-    PATTERN = (
-        lambda token: rf"{PATTERN1(token)}([{re.escape(string.punctuation)} ]+|\.\\n)"
-    )
+    def PATTERN1(token):
+        return f"(^| )(?i)({token})"
+    def PATTERN(token):
+        return f"{PATTERN1(token)}([{re.escape(string.punctuation)} ]+|\\.\\\\n)"
     SUB_PATTERN = rf"\1{START_TOKEN}\2{END_TOKEN}\3"
 
     for token in word_tokenize(sentence):
@@ -89,12 +90,15 @@ def search(
 
     Args:
         fn (Callable): Which function to use to search for terms;
-        counter (WordCounter): An object with word occurrences, with term occurrences in sentences.
+        counter (WordCounter): An object with word occurrences, with term occurrences 
+        in sentences.
         most_common (int, optional): the most common word occurrences. Defaults to 5.
-        example_sentences (int, optional): the number of example sentences with term occurrence. Defaults to 3.
+        example_sentences (int, optional): the number of example sentences with term 
+        occurrence. Defaults to 3.
 
     Returns:
-        List[SearchOutput]: A list of tuples, of (word, occurrences, set of documents, example sentences)
+        List[SearchOutput]: A list of tuples, of (word, occurrences, set of documents, 
+        example sentences)
     """
     outputs = []
 
@@ -116,8 +120,8 @@ def build_output_table(outputs: List[SearchOutput]) -> str:
     """Builds a `rich` output table from a list of search outputs and prints it.
 
     Args:
-        outputs (List[SearchOutput]): most common words, it's count, documents where it appears,
-        and example sentences.
+        outputs (List[SearchOutput]): most common words, it's count, documents where it 
+        appears, and example sentences.
 
     Returns:
         str: A rendered table that can be printed.

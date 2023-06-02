@@ -46,7 +46,6 @@ RGX_SCIKIT_EDGE_CASE = [
     re.escape("em"),
     re.escape("t"),
 ]
-# RGX_PATTERN = re.compile(f'{RGX_PUNKT}|{RGX_ELLIPSIS}|{RGX_QUOTES}|{RGX_DQUOTES}|{RGX_BACKTICK}|{RGX_HIFEN}')
 RGX_PATTERN = re.compile("|".join(RGX_EXTENDED_PUNKT + RGX_SUFFIXES))
 
 Word = str
@@ -134,9 +133,9 @@ def preprocess_words_nltk(words: List[str]) -> List[str]:
     4. Remove apostrophe cases ('ve, 're, etc.)
 
     Since `word_tokenize` from nltk already separates words from punctuation like
-    i.e. hard-earned, into ["hard-earned", ","], we can easily separate actual punctuation
-    from word formation. Additionally, tokenizing `could've` will result in ["could", "'ve"]
-    in which case we can easily detect with regex.
+    i.e. hard-earned, into ["hard-earned", ","], we can easily separate actual 
+    punctuation from word formation. Additionally, tokenizing `could've` will result in 
+    ["could", "'ve"] in which case we can easily detect with regex.
 
 
     Args:
@@ -168,7 +167,8 @@ def count_nltk(doc_name: str, document: str) -> Tuple[WordCounter, Sentences]:
         document (str): the whole document itself.
 
     Returns:
-        Tuple[WordCounter, Sentences]: returns words occurrences, and corresponding preprocessed sentences.
+        Tuple[WordCounter, Sentences]: returns words occurrences, and corresponding 
+        preprocessed sentences.
     """
     word_counts = WordCounter()
     sentences: List[str] = sent_tokenize(document)
@@ -197,7 +197,8 @@ def count_spacy(doc_name: str, document: str) -> Tuple[WordCounter, Sentences]:
         document (str): the whole document itself.
 
     Returns:
-        Tuple[WordCounter, Sentences]: returns words occurrences, and corresponding preprocessed sentences.
+        Tuple[WordCounter, Sentences]: returns words occurrences, and corresponding 
+        preprocessed sentences.
     """
     SPACY_EN = spacy.load("en_core_web_sm")
     doc: spacy.tokens.doc.Doc = SPACY_EN(document)
@@ -208,7 +209,8 @@ def count_spacy(doc_name: str, document: str) -> Tuple[WordCounter, Sentences]:
             token and str(token).strip() and not token.is_stop and not token.is_punct
         )
 
-    preprocess_token = lambda token: str(token).strip().lower()
+    def preprocess_token(token):
+        return str(token).strip().lower()
 
     fixed_sentences = []
     for i, s in enumerate(doc.sents):
@@ -232,7 +234,8 @@ def count_scikit(doc_name: str, document: str) -> Tuple[WordCounter, Sentences]:
         document (str): the whole document itself.
 
     Returns:
-        Tuple[WordCounter, Sentences]: returns words occurrences, and corresponding preprocessed sentences.
+        Tuple[WordCounter, Sentences]: returns words occurrences, and corresponding 
+        preprocessed sentences.
     """
     vectorizer = CountVectorizer(
         token_pattern=r"\b[a-zA-Z]+\b",  # Keep only words consisting, no numbers
@@ -245,7 +248,8 @@ def count_scikit(doc_name: str, document: str) -> Tuple[WordCounter, Sentences]:
     word_counts = WordCounter()
     sentences: List[str] = sent_tokenize(document)
     fixed_sentences: List[str] = [preprocess_sentence(s) for s in sentences]
-    # Fit the vectorizer to the documents and transform the documents into a word-count matrix
+    # Fit the vectorizer to the documents and transform the documents into a 
+    # word-count matrix
     X = vectorizer.fit_transform(sentences)
 
     # Sum matrix of word occurences
@@ -255,12 +259,9 @@ def count_scikit(doc_name: str, document: str) -> Tuple[WordCounter, Sentences]:
 
     # A word is valid if it's not i.e: 's, 've, s, t, ve etc.
     # Scikit is not very helpful parsing these cases
-    valid_word = (
-        lambda word: re.compile("|".join(RGX_SUFFIXES + RGX_SCIKIT_EDGE_CASE)).sub(
-            "", word
-        )
-        != ""
-    )
+    def valid_word(word):
+        pattern = re.compile("|".join(RGX_SUFFIXES + RGX_SCIKIT_EDGE_CASE))
+        return pattern.sub("", word) != ""
 
     # Manually add vocabulary to the word-counter
     for i, word in enumerate(vocabulary):
