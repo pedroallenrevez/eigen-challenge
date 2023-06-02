@@ -30,7 +30,7 @@ def load_documents() -> Dict[str, str]:
 def count_ocurrences(
     load_documents: Dict[str, str], fn: Callable
 ) -> Tuple[WordCounter, Dict[str, List[str]]]:
-    """Counts the occurrences in a set of provided documents, given a provided 
+    """Counts the occurrences in a set of provided documents, given a provided
     processing function.
 
     Args:
@@ -38,7 +38,7 @@ def count_ocurrences(
         fn (Callable): The processing function to count words.
 
     Returns:
-        Tuple[WordCounter, Dict[str, List[str]]]: A WordCounter, and a set of named 
+        Tuple[WordCounter, Dict[str, List[str]]]: A WordCounter, and a set of named
         documents, and preprocessed sentences.
     """
     doc_sents = {}
@@ -64,7 +64,7 @@ def count_ocurrences_nltk(
         fn (Callable): The processing function to count words.
 
     Returns:
-        Tuple[WordCounter, Dict[str, List[str]]]: A WordCounter, and a set of named 
+        Tuple[WordCounter, Dict[str, List[str]]]: A WordCounter, and a set of named
         documents, and preprocessed sentences.
     """
     return count_ocurrences(load_documents, count_nltk)
@@ -83,7 +83,7 @@ def count_ocurrences_spacy(
         fn (Callable): The processing function to count words.
 
     Returns:
-        Tuple[WordCounter, Dict[str, List[str]]]: A WordCounter, and a set of named 
+        Tuple[WordCounter, Dict[str, List[str]]]: A WordCounter, and a set of named
         documents, and preprocessed sentences.
     """
     return count_ocurrences(load_documents, count_spacy)
@@ -102,7 +102,7 @@ def count_ocurrences_scikit(
         fn (Callable): The processing function to count words.
 
     Returns:
-        Tuple[WordCounter, Dict[str, List[str]]]: A WordCounter, and a set of named 
+        Tuple[WordCounter, Dict[str, List[str]]]: A WordCounter, and a set of named
         documents, and preprocessed sentences.
     """
     return count_ocurrences(load_documents, count_scikit)
@@ -111,11 +111,11 @@ def count_ocurrences_scikit(
 def search_most_common(
     count_ocurrences: Tuple[WordCounter, Dict[str, List[str]]]
 ) -> Output[typing.List[SearchOutput]]:
-    """Runs the search algorithm to look for sentences that have the most common search 
+    """Runs the search algorithm to look for sentences that have the most common search
     terms.
 
     Args:
-        count_ocurrences (Tuple[WordCounter, Dict[str, List[str]]]): A WordCounter and 
+        count_ocurrences (Tuple[WordCounter, Dict[str, List[str]]]): A WordCounter and
         preprocessed sentences where terms occur.
 
     Returns:
@@ -146,11 +146,11 @@ def search_most_common_nltk(
     Look at `search_most_common` for more details.
 
     Args:
-        count_ocurrences (Tuple[WordCounter, Dict[str, List[str]]]): A WordCounter and 
+        count_ocurrences (Tuple[WordCounter, Dict[str, List[str]]]): A WordCounter and
         preprocessed sentences where terms occur.
 
     Returns:
-        Output[List[SearchOutput]]: A set of search sentences outputs, the most common 
+        Output[List[SearchOutput]]: A set of search sentences outputs, the most common
         words, the documents where they occur, and randomly picked example sentences.
     """
     return search_most_common(count_ocurrences_nltk)
@@ -164,11 +164,11 @@ def search_most_common_spacy(
     Look at `search_most_common` for more details.
 
     Args:
-        count_ocurrences (Tuple[WordCounter, Dict[str, List[str]]]): A WordCounter and 
+        count_ocurrences (Tuple[WordCounter, Dict[str, List[str]]]): A WordCounter and
         preprocessed sentences where terms occur.
 
     Returns:
-        Output[List[SearchOutput]]: A set of search sentences outputs, the most common 
+        Output[List[SearchOutput]]: A set of search sentences outputs, the most common
         words, the documents where they occur, and randomly picked example sentences.
     """
     return search_most_common(count_ocurrences_spacy)
@@ -182,11 +182,11 @@ def search_most_common_scikit(
     Look at `search_most_common` for more details.
 
     Args:
-        count_ocurrences (Tuple[WordCounter, Dict[str, List[str]]]): A WordCounter and 
+        count_ocurrences (Tuple[WordCounter, Dict[str, List[str]]]): A WordCounter and
         preprocessed sentences where terms occur.
 
     Returns:
-        Output[List[SearchOutput]]: A set of search sentences outputs, the most common 
+        Output[List[SearchOutput]]: A set of search sentences outputs, the most common
         words, the documents where they occur, and randomly picked example sentences.
     """
     return search_most_common(count_ocurrences_scikit)

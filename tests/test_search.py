@@ -26,6 +26,7 @@ def test_search_term():
 
     def PATTERN1(token):
         return f"(^|\\s)(?i)({token})"
+
     SUB_PATTERN = rf"\1{START_TOKEN}\2{END_TOKEN}"
     assert bool(re.match(PATTERN1(TOKEN), " america"))
     assert bool(re.match(PATTERN1(TOKEN), " America"))
@@ -36,6 +37,7 @@ def test_search_term():
 
     def PATTERN(token):
         return f"{PATTERN1(token)}([{re.escape(string.punctuation)} ]+|\\.\\\\n)"
+
     SUB_PATTERN = rf"\1{START_TOKEN}\2{END_TOKEN}\3"
 
     sentence = " america "

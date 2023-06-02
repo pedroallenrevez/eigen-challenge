@@ -4,8 +4,10 @@ from eigen.nlp import preprocess_sentence, preprocess_words_nltk
 
 
 def test_preprocessing():
-    sentence1 = ("Let me begin by saying thanks to all you who've traveled, from far "
-                 "and wide, to brave the cold today.")
+    sentence1 = (
+        "Let me begin by saying thanks to all you who've traveled, from far "
+        "and wide, to brave the cold today."
+    )
     sentence1 = preprocess_sentence(sentence1)
     sentence1 = sentence1.lower()
     words = word_tokenize(sentence1)
@@ -22,12 +24,14 @@ def test_preprocessing():
         "today",
     ]
 
-    sentence2 = ("And as our economy changes, let's be the generation that ensures our "
-                 "nation's workers are sharing in our prosperity. Let's protect the "
-                 "hard-earned benefits their companies have promised. Let's make it "
-                 "possible for hardworking Americans to save for retirement. "
-                 "And let's allow our unions and their organizers to lift up this "
-                 "country's middle-class again.")
+    sentence2 = (
+        "And as our economy changes, let's be the generation that ensures our "
+        "nation's workers are sharing in our prosperity. Let's protect the "
+        "hard-earned benefits their companies have promised. Let's make it "
+        "possible for hardworking Americans to save for retirement. "
+        "And let's allow our unions and their organizers to lift up this "
+        "country's middle-class again."
+    )
     sentence2 = preprocess_sentence(sentence2)
     sentence2 = sentence2.lower()
     words = word_tokenize(sentence2)
