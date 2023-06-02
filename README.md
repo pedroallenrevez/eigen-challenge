@@ -147,7 +147,36 @@ It is not needed for running this project, and are personal files - Poetry manag
 
 ## Learning Conclusions
 
-- `dagster` - how to define data assets, how the graph dependency is built, overall use of the interface.
+- `dagster`
+  - how to define data assets, how the graph dependency is built
+  ```python
+  @asset
+  def asset_name():
+    return 1
+
+  @asset
+  def dependent_asset(asset_name):
+    return asset_name * 2
+  ```
+  - overall use of the interface - just click "Materialize All"
+  - jobs are schedulable and encapsulate a dagster graph
+  ```python
+  eigen_job = define_asset_job("eigen_job", selection=AssetSelection.all())
+
+  defs = Definitions(
+      assets=all_assets,
+      jobs=[eigen_job],  # Addition: add the job to Definitions object (see below)
+  )
+  ```
+    - `AssetSelection` allows us to select assets define in our dagster definitions for a job.
+    - define a job with `Definitions` and related assets
+    - define a schedule for the job with
+    ```python
+    eigen_schedule = ScheduleDefinition(
+        job=eigen_job,
+        cron_schedule="0 * * * *",  # every hour
+    )
+    ```
 - `direnv` - a way of defining development environments based on file-system access by changing directory to the folder, it activates the environment. How to properly set it up on a non-NixOs Linux distribution:
   - write a config file at `~/.config/nix/nix.conf` with:
   ```
