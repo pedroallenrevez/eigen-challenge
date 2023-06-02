@@ -108,13 +108,26 @@ The main steps of execution are the following:
 7. Output example;
 
 
-### Benchmark 1: scikit-learn.TF-IDF
+### Solution 1: NLTK
+By using `nltk.tokenize.word_tokenize` and `nltk.tokenize.sent_tokenize` you can use their NLP engine to parse different sentences within a document, and the words contained in it.
+By using the stopwords and punctuation model of NLTK you can parse out meaningless words like "all", "and", "is" that do not pose value for counting word occurrences.
+After this parsing is done, we can preprocess the word tokens by normalizing them to a state where a token is case-insensitive, so "American" would equal "american".
 
-### Benchmark 2: spacy
+### Solution 2: spacy
 
-### Solution: NLTK
+By using spacy's NLP engine API, you can process a whole document and have a processed document API, which is a different approach to NLTK, that isolates each processing step.
+Preprocessing word tokens is also done with this spacy object, with no need to download any different models like NLTK, reducing the needed dependencies.
+All in all, due to this overwhelming engine, processing takes much more time, which you can confer by the benchmarking results below.
 
-### Timers
+
+### Benchmark: scikit-learn.CountVectorizer
+
+As a baseline solution we use `scikit.CountVectorizer`, which ended up being the fastest
+solution, due to the C-bindings implementation of scikit.
+Although it ended up being the most noisy and ugly solution, needing a better parsing step than the vectorizer allowed to select tokens, which is highly simplified by both `nltk` and `spacy` API.
+We have to manually build our WordCounter, and thus the implemented solution is not as readable.
+
+### Time Benchmarks
 
 | Scikit | Spacy | NLTK |
 | ------ | ----- | ---- |
@@ -132,4 +145,26 @@ It allows declaring a system-definition, with almost mathematical soundness. It 
 You can install the development environment by first installing Nix and then running the script `activate.sh`.
 It is not needed for running this project, and are personal files - Poetry manages the python dev environment, packaging and running the application.
 
-## Conclusions
+## Learning Conclusions
+
+- `dagster` - how to define data assets, how the graph dependency is built, overall use of the interface.
+- `direnv` - a way of defining development environments based on file-system access and how to properly set it up on a non-NixOs Linux distribution:
+  - write a config file at `~/.config/nix/nix.conf` with:
+  ```
+  experimental-features = nix-command flakes
+  keep-derivations = true
+  keep-outputs = true
+  ```
+  - activation of the environment when using divnix/std methodology (check repo badges for more information)
+- `nix` environments and how to properly set up a python environment that uses C bindings:
+  - it would throw an error because nix environments are isolated, and not linked to system installed libraries;
+  - define the following environment variables on the divnix/std wrapper around numtide/devshells by linking to the nix store dependencies of C compiler, and other utilities like zlib compression (used by scipy):
+  ```nix
+  env = [
+    {
+      # Link to libstc++ libraries, and zlib libraries
+      name = "LD_LIBRARY_PATH";
+      value = ''${nixpkgs.stdenv.cc.cc.lib}/lib/:${nixpkgs.zlib}/lib/:$LD_LIBRARY_PATH'';
+    }
+  ];
+  ```
