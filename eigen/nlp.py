@@ -287,7 +287,7 @@ def count_scikit(doc_name: str, document: str) -> Tuple[WordCounter, Sentences]:
         if not valid_word(word):
             continue
         count = x_word_count[0, i]
-        word_counts._counter[word] = count
+        word_counts._counter[word] = int(count)
     # Manually add sentence occurrences
     for sent_idx, row in enumerate(X):
         for idx in row.indices:
