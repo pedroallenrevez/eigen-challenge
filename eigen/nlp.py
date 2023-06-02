@@ -62,19 +62,27 @@ class WordCounter:
         self._counter = Counter()
         self._localizer: Dict[Word, List[WordLoc]] = {}
 
-    def to_json(self) -> JSONStr:
+
+    def to_dict(self) -> dict:
         dct = {}
         for w in self._counter:
             dct[w] = {}
             dct[w]["count"] = self._counter[w]
             dct[w]["examples"] = self._localizer[w]
-        return json.dumps(dct)
+        return dct
+
+    def to_json(self) -> JSONStr:
+        return json.dumps(self.to_dict())
 
     @classmethod
     def from_json(cls, json_string: JSONStr) -> "WordCounter":
         json_values = json.loads(json_string)
+        return cls.from_dict(json_values)
+
+    @classmethod
+    def from_dict(cls, dct: dict) -> "WordCounter":
         counter = cls()
-        for word, values in json_values.items():
+        for word, values in dct.items():
             counter._counter[word] = values["count"]
             counter._localizer[word] = [(l[0], l[1]) for l in values["examples"]]
         return counter
