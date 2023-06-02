@@ -27,9 +27,8 @@ in
       ];
       env = [
         {
-          name = "LD_LIBRARY_PATH";
-          #value = ''${nixpkgs.stdenv.cc.cc.lib}/lib/'';
           # Link to libstc++ libraries, and zlib libraries
+          name = "LD_LIBRARY_PATH";
           value = ''${nixpkgs.stdenv.cc.cc.lib}/lib/:${nixpkgs.zlib}/lib/:$LD_LIBRARY_PATH'';
         }
       ];
