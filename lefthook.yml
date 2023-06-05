@@ -1,13 +1,9 @@
-pre-push:
-  parallel: true
 pre-commit:
+  parallel: true
   commands:
     treefmt:
       run: treefmt
-    # frontend-linter:
-    #   run: yarn eslint {staged_files}
-    # backend-linter:
-    #   run: bundle exec rubocop --force-exclusion {all_files}
-    # frontend-style:
-    #   files: git diff --name-only HEAD @{push}
-    #   run: yarn stylelint {files}
+    ruff:
+      run: poetry run ruff .
+    # mypy:
+    #   run: poetry run mypy . --ignore-missing-imports --install-types --non-interactive
