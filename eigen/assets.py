@@ -23,8 +23,9 @@ def load_documents() -> Dict[str, str]:
     """
     docs = {}
     for p in Path("./input").glob("*.txt"):
-        doc = p.read_text(encoding="utf-8")
-        docs[p.name] = doc
+        doc_name: str = p.name
+        doc: str = p.read_text(encoding="utf-8")
+        docs[doc_name] = doc
     return docs
 
 

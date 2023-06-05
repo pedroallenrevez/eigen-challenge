@@ -1,0 +1,13 @@
+[global]
+excludes = [".conform.yaml", "lefthook.yml", "treefmt.toml", ".editorconfig"]
+
+
+[formatter.python]
+command = "black"
+includes = ["*.py"]
+options = []
+
+[formatter.python2]
+command = "isort"
+includes = ["*.py"]
+options = []
