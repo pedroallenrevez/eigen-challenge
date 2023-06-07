@@ -23,13 +23,16 @@ in
       imports = [];
       packages = with nixpkgs; [
         zlib # needed by spacy
+        gcc12
+        glibc
         poetry
       ];
       env = [
         {
           # Link to libstc++ libraries, and zlib libraries
           name = "LD_LIBRARY_PATH";
-          value = ''${nixpkgs.stdenv.cc.cc.lib}/lib/:${nixpkgs.zlib}/lib/:$LD_LIBRARY_PATH'';
+          #value = ''${nixpkgs.stdenv.cc.cc.lib}/lib/:${nixpkgs.zlib}/lib/:$LD_LIBRARY_PATH'';
+          value = ''${nixpkgs.gcc12}/lib/:${nixpkgs.zlib}/lib/:$LD_LIBRARY_PATH'';
         }
       ];
       commands = [
